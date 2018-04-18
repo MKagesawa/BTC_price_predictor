@@ -99,3 +99,8 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+.idea
+twitter_credentials.py
+twitter_keys.yaml
+.idea/vcs.xml
