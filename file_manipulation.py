@@ -29,5 +29,5 @@ for row in csv_f:
     else:
         row.append(0)
 
-print(type(csv_f))
+
 
