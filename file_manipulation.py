@@ -4,7 +4,7 @@ import numpy as np
 
 # I added a column to the csv file measuring the change in price
 f = open('coinbaseUSD.csv')
-csv_f = csv.reader(f)
+csv_f = list(csv.reader(f))
 first_line = True
 
 for row in csv_f:
@@ -29,5 +29,6 @@ for row in csv_f:
     else:
         row.append(0)
 
+f.close()
 
-
+print(csv_f[:5])

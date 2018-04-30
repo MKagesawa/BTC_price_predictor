@@ -1,15 +1,11 @@
 """
 Code for sentiment analysis of tweets and tokenization
 
-TO DO:
-    Add rest of bitcoin data
-    Write the label to the data
-    DRY
-
 """
 
 from textblob import TextBlob
 import json
+import datetime 
 
 # read in data
 data = []
@@ -22,20 +18,22 @@ for f in files:
 
 combined_data = []
 
-# convert tweet text to text blob and get sentiment, write to new json file
+# convert tweet text to text blob and get sentiment
 for tweet in data:
-    tb = TextBlob(tweet["text"])
+
+    tb = TextBlob(tweet['text'])
+    
+    # get timestamp
+    ts = tweet["created_at"]
+    ts = datetime.datetime.strptime(ts, '%a %b %d %H:%M:%S %z %Y')
+    ts = datetime.datetime.strftime(ts, '%Y-%m-%d %H:%M:%S')  
     
     # note: sentiment is a Sentiment object in form:
     # Sentiment(polarity = -1 <= n <= 1, subjectivity = 0 <= n <= 1)
     sent = tb.sentiment
 
-    data = {"tweet" : tb, "sentiment" : sent }
-    
-    with open('data_file.json', 'w') as write_file:
-        json.dump(data, write_file)
-
-
+    data = {"timestamp": ts, "tweet" : tb, "sentiment" : sent }
+    combined_data.append(data)
 
 
 # should try different experiemnts for tokenization and n-grams. 
