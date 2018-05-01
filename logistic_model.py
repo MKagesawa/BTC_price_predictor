@@ -8,26 +8,23 @@ from textblob import TextBlob
 
 def get_labels(combined_data, csv_f):
     # combined data has "timestamp", "tweet", "sentiment"
-    # csv_f has the label indicating price movement
+    # csv_f has the label indicating price movement at each minute
+    # csv_f[0][0] is the time stamp csv_f[0][-1] is the label 
     # give each tweet the same label based on timestamp
     
     for tweet in combined_data:
         ts = tweet["timestamp"]
-        #tweet["label"] = 
-    pass
+        for line in csv_f:
+            if line[0] == ts:                
+                tweet["label"] = line[-1]
+                
+    return combined_data
 
 
 def split_data(data):
     # divide data into training, validation, and test sets
-    with open(json_file, 'r') as read_file:
-        data = json.load(read_file)
-        
-    # ALSO NEED TO MAKE SURE THAT THE DATES WE HAVE TWEETS FOR AND THE DATES WE
-    # HAVE PRICE DATA FOR ARE THE SAME SO THAT WE AREN'T USING EXTRANEOUS DATA? 
-    
-        
+
     # randomly shuffle data in place
-    # not sure if this works-- does json.load return a list of JSON objects?
     random.shuffle(data)
     
     training_len = math.ceil(len(data) * 0.8)
@@ -40,10 +37,12 @@ def split_data(data):
     
     return training, validation, test
 
+
 def logistic_func(w, x, b):
     z = np.dot(w,x)
     f = 1 / (1 + math.e ** -z)
     return f
+
 
 def mle(x, y, w, b, cost_history):
     # cost_history is a list of the cost after each iteration of SGD
@@ -56,10 +55,10 @@ def mle(x, y, w, b, cost_history):
     cost_history.append(J)
     return J, cost_history
 
-#try a different gradient descent algorithm? 
+
 def SGD(data, a):
     # random initialization of w
-    w = [random.random() for i in range(len(data[0]))]
+    w = [random.random() for i in range(len(data[0] + 1))]
     
     # shuffle points
     random.shuffle(data)
@@ -71,5 +70,6 @@ def SGD(data, a):
     
     pass
 
+
 def main():
-    print(csv_f[:5])
+    
