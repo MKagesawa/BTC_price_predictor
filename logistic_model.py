@@ -1,10 +1,15 @@
-from file_manipulation import csv_f
 import json
 import math
 import numpy as np
 import random
-from sentiment_tokenization import combined_data
 from textblob import TextBlob
+import pickle
+
+text_object = open("sentiment_analyzed_data.pkl", "rb")
+text_data = pickle.load(text_object)
+
+print(text_data)
+
 
 def get_labels(combined_data, csv_f):
     # combined data has "timestamp", "tweet", "sentiment"
@@ -64,12 +69,12 @@ def SGD(data, a):
     random.shuffle(data)
     
     # derivative of mle cost function
-    dw 
+    #dw
     # update w
-    w = w - a * dw
+    #w = w - a * dw
     
     pass
 
 
 def main():
-    
+    pass

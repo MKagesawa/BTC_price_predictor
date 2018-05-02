@@ -10,7 +10,7 @@ def collect_data(sc):
     req = requests.get(url)
     jsonRespond = req.json()
     print(jsonRespond)
-    with open("./BPI1.json", "a+") as f:
+    with open("./BPI5.json", "a+") as f:
         f.write(json.dumps(jsonRespond) + '\n')
     s.enter(60, 1, collect_data, (sc,))
 
