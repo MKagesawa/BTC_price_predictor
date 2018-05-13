@@ -1,6 +1,5 @@
 """
 Code for sentiment analysis of tweets and tokenization
-
 """
 
 from textblob import TextBlob
@@ -11,7 +10,8 @@ import pickle
 
 # read in data
 data = []
-files = ['bitcoin_tweet.json', 'bitcoin_tweet2.json', 'bitcoin_tweet3.json', 'bitcoin_tweet4.json', 'bitcoin_tweet5.json']
+files = ['bitcoin_tweet.json', 'bitcoin_tweet2.json', 'bitcoin_tweet3.json', \
+         'bitcoin_tweet4.json', 'bitcoin_tweet5.json', 'bitcoin_tweet6.json']
 
 for f in files:
     with open(f, 'r') as read_file:
