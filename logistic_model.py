@@ -9,8 +9,7 @@ import json
 import math
 import numpy as np
 import random
-from textblob import TextBlob
-import sentiment_tokenization
+import matplotlib.pyplot as plt
 
 '''
 def get_labels(combined_data, csv_f):
@@ -80,15 +79,15 @@ def SGD(data, labels, a, w):
         update = np.array(update)
         w = w - a * update
 
-    return w
+    return w, cost
 
 
 def main():
-    #combined_data = sentiment_tokenization.combined_data
-    #print(combined_data[0])
     
-    # or just use labeled_tweets.json
-    labeled_data = json.loads('labeled_tweets.json')
+    labeled_data = []
+    with open('labeled_tweets.json') as json_file:
+        for line in json_file:
+            labeled_data.append(json.loads(line))
     print(labeled_data[0])
     
     # get just the relevant variables we are using 
@@ -100,11 +99,23 @@ def main():
     
     print(data[0])
     
-    epochs = 1
+    epochs = 10
     a = 0.001
     w = np.zeros(len(data[0])+1)
+    cost = []
     
-    #for e in range(epochs):
-    #    w = SGD(data, labels, a, w)
+    for e in range(epochs):
+        w, c = SGD(data, labels, a, w)
+        cost.append(c)
+        
+    print(w)
+        
+    # plot cost function 
+    plt.plot(range(10), [sum(i) for i in cost])
+    plt.title('Cost per Epoch of SGD')
+    plt.xlabel('Epoch')
+    plt.ylabel('Cost')
+    plt.show()
+    
     
 main()
