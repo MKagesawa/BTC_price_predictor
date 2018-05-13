@@ -1,28 +1,25 @@
+from ast import literal_eval
 import json
+from pprint import pprint
 
-with open('BPI1.json') as f:
-    file = f.readlines()
-st = file[0]
-combined = []
-# change time format to 'month, date, time' e.g. str'Apr 17 16:13:00'
-print(json.loads(st)['time']['updated'][:6] + ' ' + json.loads(st)['time']['updated'][13:21])
-before = 0
+with open('labeled_tweets.json') as t:
+    tile = t.readlines()
 
-for line in file:
-    pair = []
-    pair.append(json.loads(line)['time']['updated'][:6] + ' ' + json.loads(line)['time']['updated'][13:21])
-    now = float((json.loads(line)['bpi']['USD']['rate']).replace(',', ''))
-    if now > before:
-        pair.append(1)
-    elif now < before:
-        pair.append(0)
-    else:
-        pair.append(-1)
-    pair.append(now)
-    before = now
-    combined.append(pair)
+#a = json.loads(tile[0])
+print(tile[0])
+print(len(tile[1]))
+for tweet in tile:
+    b = json.loads(tile[1])
+    print(b['timestamp'])
+print(len(tile[100]))
 
-print(combined)
-
-with open("./Tick1.json", "w") as f:
-    f.write(str(combined))
+"""
+a = tile[0].replace("'", "\"")[1:-1]
+b = json.loads(json.dumps(a))
+print(type(b))
+import json
+s = "{'muffin' : 'lolz', 'foo' : 'kitty'}"
+json_acceptable_string = s.replace("'", "\"")
+d = json.loads(json_acceptable_string)
+# d = {u'muffin': u'lolz', u'foo': u'kitty'}
+"""
