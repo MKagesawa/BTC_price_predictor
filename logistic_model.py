@@ -1,10 +1,18 @@
-from file_manipulation import csv_f
+'''
+Links:
+    https://zlatankr.github.io/posts/2017/03/06/mle-gradient-descent
+    https://machinelearningmastery.com/implement-logistic-regression-stochastic-gradient-descent-scratch-python/
+    
+
+'''
+
+
 import json
 import math
 import numpy as np
 import random
-from sentiment_tokenization import combined_data
 from textblob import TextBlob
+import sentiment_tokenization
 
 def get_labels(combined_data, csv_f):
     # combined data has "timestamp", "tweet", "sentiment"
@@ -17,13 +25,8 @@ def get_labels(combined_data, csv_f):
         for line in csv_f:
             if line[0] == ts:                
                 tweet["label"] = line[-1]
-    x = []            
-    labels = []
-    for i in combined_data:
-        x.append([i['sentiment'].polarity,i['sentiment'].subjectivity, 1]) 
-        labels.append(i['label'])
                 
-    return x, labels
+    return combined_data
 
 
 def split_data(data):
@@ -33,34 +36,24 @@ def split_data(data):
     random.shuffle(data)
     
     training_len = math.ceil(len(data) * 0.8)
-    validation_len = (len(data) - training_len) // 2 
+    validation_len = len(data) - training_len 
+    test_len = len(data) - validation_len - training_len
     
     training = data[:training_len]
-    validation = data[training_len : training_len + validation_len]
-    test = data[training_len + validation_len:]
+    validation = data[training_len:test_len]
+    test = data[test_len:]
     
     return training, validation, test
 
 
 def logistic_func(w, x):
-    
-    w = np.array(w)
-    
-    # must account for bias by extending x by 1-- is bias term the first or last
-    # make it the last
-    x = np.array(x)
     z = np.dot(w,x)
-    
     f = 1 / (1 + math.e ** -z)
-    
     return f
 
-# x is a list of the data points, y is a list of the labels, 
-# w is a list of the weights
-# cost_history is a list of the cost after each iteration of SGD
-def mle(x, y, w, cost_history):
-    # b is a list of the bias terms
-    
+
+def mle(x, y, w, b, cost_history):
+    # cost_history is a list of the cost after each iteration of SGD
     temp = 0
     m = len(x)
     for i in range(m):
@@ -71,30 +64,49 @@ def mle(x, y, w, cost_history):
     return J, cost_history
 
 
-def SGD(data, a):
-    # random initialization of w
-    w = [random.random() for i in range(len(data[0] + 1))]
-    w = np.array(w)
+def SGD(data, y, a, w):
+    
+    #w = [random.random() for i in range(len(data[0] + 1))]
     
     # shuffle points
     random.shuffle(data)
     
-    # derivative of mle cost function
-    dw 
-    # update w
-    w = w - a * dw
+    for d in range(len(data)):
+        
+        update = []
+        
+        for i in range(len(w)):
+            # need a temp list to store updates to each item in w
+            temp =  w - a * (logistic_func(w, data[d]) - y[d]) * data[i]
+            update.append(temp)
+            
+        # update all items in w simultaneously
+        update = np.array(update)
+        w = w - a * update
+
+    return w
     
+
+def predict(x, w):
     pass
 
 
 def main():
-    training, validation, test = split_data(combined_data)
-    x, labels = get_labels(training, csv_f)
+    combined_data = sentiment_tokenization.combined_data
+    print(combined_data[0])
     
-    cost_history = []
-    mle(x, labels, w)
+    # get just the relevant variables we are using 
+    data = []
+    labels = []
+    for d in combined_data:
+        data.append([1, d["sentiment"].polarity ,  d["sentiment"].subjectivity, d["price"]])
+        labels.append(d["label"])
     
-    a = 0.01
+    epochs = 1
+    a = 0.001
+    w = np.zeros(len(data[0])+1)
     
+    for e in range(epochs):
+        w = SGD(data, labels, a, w)
     
-    
+main()
