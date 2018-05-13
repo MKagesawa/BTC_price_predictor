@@ -18,13 +18,12 @@ def get_labels(combined_data, csv_f):
     # csv_f has the label indicating price movement at each minute
     # csv_f[0][0] is the time stamp csv_f[0][-1] is the label 
     # give each tweet the same label based on timestamp
-    
+    labeled_data = []
     for tweet in combined_data:
         ts = tweet["timestamp"]
         for line in csv_f:
             if line[0] == ts:                
-                tweet["label"] = line[-1]
-                
+                tweet["label"] = line[-1]                
     return combined_data
 '''
 
@@ -35,7 +34,7 @@ def split_data(data):
     random.shuffle(data)
     
     training_len = math.ceil(len(data) * 0.8)
-    validation_len = len(data) - training_len 
+    validation_len = len(data) - training_len
     test_len = len(data) - validation_len - training_len
     
     training = data[:training_len]

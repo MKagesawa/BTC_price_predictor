@@ -87,17 +87,10 @@ class TwitterListener(StreamListener):
 if __name__ == '__main__':
     # Authenticate using config.py and connect to Twitter Streaming API.
     hash_tag_list = ["bitcoin", "Bitcoin", "BITCOIN"]
-    fetched_tweets_filename = "bitcoin_tweet.json"
+    fetched_tweets_filename = "bitcoin_tweet9.json"
 
     #twitter_client = TwitterClient('pycon')
     #print(twitter_client.get_user_timeline_tweets(1))
 
     twitter_streamer = TwitterStreamer()
     twitter_streamer.stream_tweets(fetched_tweets_filename, hash_tag_list)
-
-"""
-with open('bitcoin_tweet.json') as f:
-    file = f.readlines()
-
-print(json.loads(file[8])['text'])
-"""
