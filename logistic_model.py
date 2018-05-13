@@ -45,7 +45,7 @@ def split_data(data):
 
 
 def logistic_func(w, x):
-    z = np.dot(w,x)
+    z = np.dot(w, x)
     f = 1 / (1 + math.e ** -z)
     return f
 
@@ -86,16 +86,22 @@ def SGD(data, labels, a, w):
 def main():
     #combined_data = sentiment_tokenization.combined_data
     #print(combined_data[0])
-    
+    labeled_data = []
     # or just use labeled_tweets.json
-    labeled_data = json.loads('labeled_tweets.json')
-    print(labeled_data[0])
+    with open('labeled_tweets.json') as f:
+        file = f.readlines()
+    for d in file:
+        try:
+            labeled_data.append(json.loads(d))
+        except json.decoder.JSONDecodeError:
+            continue
+    print('labeled_data: ', labeled_data)
     
     # get just the relevant variables we are using 
     data = []
     labels = []
     for d in labeled_data:
-        data.append([1, d["sentiment"][0] ,  d["sentiment"][1], d["price"]])
+        data.append([1, d["sentiment"][0],  d["sentiment"][1], d["price"]])
         labels.append(d["label"])
     
     print(data[0])
@@ -104,7 +110,8 @@ def main():
     a = 0.001
     w = np.zeros(len(data[0])+1)
     
-    #for e in range(epochs):
-    #    w = SGD(data, labels, a, w)
+    for e in range(epochs):
+        w = SGD(data, labels, a, w)
+        print('w:', w)
     
 main()
