@@ -10,7 +10,7 @@ import datetime
 
 # read in data
 data = []
-files = ['bitcoin_tweet4.json'] #, 'bitcoin_tweet2.json', 'bitcoin_tweet3.json', 'bitcoin_tweet4.json', 'bitcoin_tweet5.json']
+files = ['bitcoin_tweet9.json']
 
 for f in files:
     with open(f, 'r') as read_file:
@@ -18,21 +18,21 @@ for f in files:
             data.append(json.loads(line))
 
 
-with open('BPI4.json') as f:
+with open('BPI9.json') as f:
     file = f.readlines()
 processed_time = []
-combined = []
 # change time format to 'month, date, time' e.g. str'Apr 17 16:13:00'
 before = 0
 # process BPI and add -1:lower price 0:others 1:higher price
-with open('bitcoin_tweet.json') as b:
-    bfile = b.readlines()
 
 for line in file:
     pair = []
     tm = json.loads(line)['time']['updated'][:21].replace(',', '')
-    tm = datetime.datetime.strptime(tm, '%b %d %Y %H:%M:%S')
-    tm = datetime.datetime.strftime(tm, '%Y-%m-%d %H:%M')
+    try:
+        tm = datetime.datetime.strptime(tm, '%b %d %Y %H:%M:%S')
+        tm = datetime.datetime.strftime(tm, '%Y-%m-%d %H:%M')
+    except ValueError:
+        continue
     pair.append(tm)
 
     now = float((json.loads(line)['bpi']['USD']['rate']).replace(',', ''))
@@ -98,36 +98,4 @@ print('count', count)
 # returns Wordlist object
 
 
-"""
-while not_stop:
-    
-    tweet_p = processed_tweet[tw]
-    print(tweet_p)
-    tweet_p = tweet_p['timestamp']
-    print(tweet_p)
-    tweet = datetime.datetime.strptime(tweet_p, '%Y-%m-%d %H:%M')
-    # if the datetime for BPI and tweet match
-    if tm == tweet:
-        temp_list.append(processed_tweet[tw])
-        tw += 1
-    # if bpi is ahead of tweet timestamp
-    elif tm > tweet:
-        # if the list is not empty
-        if len(temp_list) != 0:
-            combined.append(temp_list)
-        tw += 1
-        temp_list = []
-    # if bpi is behind tweet timestamp
-    elif tm < tweet:
-        # if the list is not empty
-        if len(temp_list) != 0:
-            combined.append(temp_list)
-        ti += 1
-        temp_list = []
-    # stop while loop when last element is reached
-    if ti == ti_len:
-        not_stop = False
-    if tw == tw_len:
-        not_stop = False
-"""
 
