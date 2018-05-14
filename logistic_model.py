@@ -69,7 +69,6 @@ def SGD(data, labels, a, w):
 
 
 def main():
-    
     labeled_data = []
     with open('labeled_tweets.json') as json_file:
         for line in json_file:
@@ -108,6 +107,5 @@ def main():
     plt.show()
     
     # find validation and test error
-    
     
 main()
