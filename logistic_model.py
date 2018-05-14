@@ -11,20 +11,6 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-'''
-def get_labels(combined_data, csv_f):
-    # combined data has "timestamp", "tweet", "sentiment"
-    # csv_f has the label indicating price movement at each minute
-    # csv_f[0][0] is the time stamp csv_f[0][-1] is the label 
-    # give each tweet the same label based on timestamp
-    labeled_data = []
-    for tweet in combined_data:
-        ts = tweet["timestamp"]
-        for line in csv_f:
-            if line[0] == ts:                
-                tweet["label"] = line[-1]                
-    return combined_data
-'''
 
 def split_data(data):
     # divide data into training, validation, and test sets
@@ -45,13 +31,13 @@ def split_data(data):
 
 def logistic_func(w, x):
     z = np.dot(w,x)
-    f = 1 / (1 + math.e ** -z)
+    f = 1 / (1 + np.exp(-z))
     return f
 
 
 def mle(x, label, w):
     
-    cost = -1 * (label * math.log(logistic_func(w,x)) + (1-label) * math.log(1 - logistic_func(w,x)))
+    cost = -1 * (label * np.log(logistic_func(w,x)) + (1-label) * np.log(1 - logistic_func(w,x)))
 
     return cost
 
@@ -61,7 +47,7 @@ def SGD(data, labels, a, w):
     #w = [random.random() for i in range(len(data[0] + 1))]
     
     # shuffle points
-    random.shuffle(data)
+    np.random.shuffle(data)
     
     cost = []
     
@@ -94,18 +80,22 @@ def main():
     data = []
     labels = []
     for d in labeled_data:
-        data.append([1, d["sentiment"][0] ,  d["sentiment"][1], d["price"]])
+        data.append(np.array([1, d["sentiment"][0] ,  d["sentiment"][1]])) # no d["price"]
         labels.append(d["label"])
     
-    print(data[0])
+    # split data but keep labels 
+    training, validation, test = split_data(data)
     
-    epochs = 10
+    labels = np.array(labels)
+    print(training[0])
+    
+    epochs = 1
     a = 0.001
-    w = np.zeros(len(data[0])+1)
+    w = np.zeros(len(training[0]))
     cost = []
     
     for e in range(epochs):
-        w, c = SGD(data, labels, a, w)
+        w, c = SGD(training, labels, a, w)
         cost.append(c)
         
     print(w)
@@ -116,6 +106,8 @@ def main():
     plt.xlabel('Epoch')
     plt.ylabel('Cost')
     plt.show()
+    
+    # find validation and test error
     
     
 main()
