@@ -10,7 +10,8 @@ import datetime
 # read in data
 data = []
 files = ['bitcoin_tweet.json', 'bitcoin_tweet2.json', 'bitcoin_tweet3.json', \
-         'bitcoin_tweet4.json', 'bitcoin_tweet5.json', 'bitcoin_tweet6.json']
+         'bitcoin_tweet4.json', 'bitcoin_tweet5.json', 'bitcoin_tweet6.json', \
+         'bitcoin_tweet7.json', 'bitcoin_tweet8.json']
 
 for f in files:
     with open(f, 'r') as read_file:
