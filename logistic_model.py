@@ -1,10 +1,3 @@
-'''
-Links:
-    https://zlatankr.github.io/posts/2017/03/06/mle-gradient-descent
-    https://machinelearningmastery.com/implement-logistic-regression-stochastic-gradient-descent-scratch-python/
-    
-'''
-
 import json
 import math
 import matplotlib.pyplot as plt
@@ -76,7 +69,7 @@ def main():
     with open('labeled_tweets.json') as json_file:
         for line in json_file:
             labeled_data.append(json.loads(line))
-    
+    print('labeled data loaded')    
     
     training, validation, test = split_data(labeled_data)
     
@@ -88,7 +81,7 @@ def main():
         labels.append(d["label"])
     
     labels = np.array(labels)
-    
+
     
     epochs = 10
     a = 0.01
@@ -98,6 +91,7 @@ def main():
     for e in range(epochs):
         w, c = SGD(data, labels, a, w)
         cost.append(c)
+        print(c)
         
     print(w)
         

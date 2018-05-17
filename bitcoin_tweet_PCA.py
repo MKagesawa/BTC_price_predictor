@@ -17,7 +17,7 @@ import sys
 
 
 # data in format: [1, d["sentiment"][0] , d["sentiment"][1]]
-def standardize_data(data):
+def normalize_data(data):
     
     polarity_sum = 0
     subjectivity_sum = 0
@@ -25,14 +25,14 @@ def standardize_data(data):
     for d in data:
         polarity_sum += d[1]
         subjectivity_sum += d[2]
-        
     mean_polarity = polarity_sum / len(data)
     mean_subjectivity = subjectivity_sum / len(data)
         
     for i in range(len(data)):
         data[i][1] -= mean_polarity
         data[i][2] -= mean_subjectivity
-        
+    #for d in data:
+    #    print(d)
     return data
 
 
@@ -43,9 +43,10 @@ def pca_projection(data):
     principal_df = pd.DataFrame(data = principalComponents, columns = ['PC1'])
     
     explained_variance = pca.explained_variance_ratio_
-    
+    print('principal_df: ', principal_df)
+    print('explained_variance: ', explained_variance)
     return principal_df, explained_variance
-    
+
 
 def logistic_reg(data, labels):
     x_train, x_test, y_train, y_test = train_test_split(data, labels, test_size = 0.2)
@@ -56,7 +57,7 @@ def logistic_reg(data, labels):
     #predictions = logisticRegr.predict(x_test)
     
     score = logreg.score(x_test, y_test)
-
+    print('score: ', score)
     return score
 
 
@@ -87,7 +88,7 @@ def sgd(data, labels, a = 0.001, i = 1000):
     plt.ylim([0.5, 1])
     plt.show()
     plt.close()
-    
+    print('sgd score: ', score)
     return score
 
 def test_hyperparameters(data, labels, alpha, max_iter):
@@ -107,15 +108,16 @@ def main():
     data = []
     labels = []
     for d in labeled_data:
-        data.append([1, d["sentiment"][0] ,  d["sentiment"][1]]) 
+        data.append([1, d["sentiment"][0],  d["sentiment"][1]])
         labels.append(d["label"])
         
-    data = standardize_data(data)
+    data = normalize_data(data)
     
     principal_df, explained_variance = pca_projection(data)
     
  
     # combine PC and labels
+    # turn labels into a df- need to normalize??
     labels_df = pd.DataFrame(labels)
     
     #run logistic reg
@@ -126,10 +128,9 @@ def main():
     # max_iter = [100, 1000, 10000]
     # test_hyperparameters(principal_df, labels_df, alpha, max_iter)
     # from this test, the lowest test score was reached using a = 0.001 and max_iter = 1000
-    
     score = sgd(principal_df, labels_df)
     print('Test Score:', score)
     
     # test for overfitting
-    
+
 main()
