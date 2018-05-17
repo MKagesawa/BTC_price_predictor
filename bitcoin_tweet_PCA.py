@@ -1,13 +1,20 @@
+"""
+
+https://towardsdatascience.com/pca-using-python-scikit-learn-e653f8989e60
+https://stackoverflow.com/questions/44443479/python-sklearn-show-loss-values-during-training/44453621#44453621
+http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html#sklearn.linear_model.SGDClassifier.score
+
+"""
+import io
 import json
+import matplotlib.pyplot as plt
+import numpy as np
 from sklearn.decomposition import PCA
 import pandas as pd
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.model_selection import train_test_split
-
 import sys
-import io
-import matplotlib.pyplot as plt
-import numpy as np
+
 
 # data in format: [1, d["sentiment"][0] , d["sentiment"][1]]
 def normalize_data(data):
@@ -54,9 +61,10 @@ def logistic_reg(data, labels):
     return score
 
 
-def sgd(data, labels):
+
+def sgd(data, labels, a = 0.001, i = 1000):
     x_train, x_test, y_train, y_test = train_test_split(data, labels, test_size = 0.2)
-    sgd = SGDClassifier(loss='log', penalty = 'l2', alpha = 0.0001, shuffle = True, max_iter = 1000, verbose = 1)
+    sgd = SGDClassifier(loss='log', penalty = 'l2', alpha = a, shuffle = True, max_iter = i, verbose = 1) #verbose = 1
     sgd.fit(x_train, y_train)
     score = sgd.score(x_test, y_test)
     
@@ -65,6 +73,7 @@ def sgd(data, labels):
     sys.stdout = mystdout = io.StringIO()
     sys.stdout = old_stdout
     loss_history = mystdout.getvalue()
+    
     loss_list = []
     for line in loss_history.split('\n'):
         if(len(line.split("loss: ")) == 1):
@@ -75,10 +84,18 @@ def sgd(data, labels):
     plt.title('Loss over Epochs')
     plt.xlabel("Time in epochs")
     plt.ylabel("Loss")
+    plt.xlim([0, 9])
+    plt.ylim([0.5, 1])
     plt.show()
     plt.close()
     print('sgd score: ', score)
     return score
+
+def test_hyperparameters(data, labels, alpha, max_iter):
+    for a in alpha:
+        for i in max_iter:
+            s = sgd(data, labels, a, i)
+            print('Score with alpha = {} and max_iter = {} : {}'.format(a, i, s))
 
 
 def main():
@@ -97,21 +114,23 @@ def main():
     data = normalize_data(data)
     
     principal_df, explained_variance = pca_projection(data)
-    #print(principal_df)
+    
  
     # combine PC and labels
     # turn labels into a df- need to normalize??
     labels_df = pd.DataFrame(labels)
     
     #run logistic reg
-    score = logistic_reg(principal_df, labels_df)
-    print('Score:', score)
+    #score = logistic_reg(principal_df, labels_df)
+    #print('Score:', score)
     
+    # alpha = [0.01, 0.001, 0.0001]
+    # max_iter = [100, 1000, 10000]
+    # test_hyperparameters(principal_df, labels_df, alpha, max_iter)
+    # from this test, the lowest test score was reached using a = 0.001 and max_iter = 1000
+    score = sgd(principal_df, labels_df)
+    print('Test Score:', score)
     
-    score_2 = sgd(principal_df, labels_df)
-    print('Score 2:', score_2)
-    
-    #plot loss?
-    
+    # test for overfitting
 
 main()

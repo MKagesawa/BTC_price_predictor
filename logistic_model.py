@@ -1,8 +1,9 @@
 import json
 import math
+import matplotlib.pyplot as plt
 import numpy as np
 import random
-import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
 
 
 def split_data(data):
@@ -23,8 +24,10 @@ def split_data(data):
 
 
 def logistic_func(w, x):
+    
     z = np.dot(w,x)
     f = 1 / (1 + np.exp(-z))
+
     return f
 
 
@@ -66,28 +69,27 @@ def main():
     with open('labeled_tweets.json') as json_file:
         for line in json_file:
             labeled_data.append(json.loads(line))
-    print('labeled data loaded')
+    print('labeled data loaded')    
     
-    # get just the relevant variables we are using 
+    training, validation, test = split_data(labeled_data)
+    
+    # get just the relevant variables we are using for training data ONLY
     data = []
     labels = []
-    for d in labeled_data:
+    for d in training:
         data.append(np.array([1, d["sentiment"][0] ,  d["sentiment"][1]])) # no d["price"]
         labels.append(d["label"])
     
-    # split data but keep labels 
-    training, validation, test = split_data(data)
-    
     labels = np.array(labels)
-    print('data splitted')
+
     
-    epochs = 1
+    epochs = 10
     a = 0.01
-    w = np.zeros(len(training[0]))
+    w = np.zeros(len(data[0]))
     cost = []
     
     for e in range(epochs):
-        w, c = SGD(training, labels, a, w)
+        w, c = SGD(data, labels, a, w)
         cost.append(c)
         print(c)
         
@@ -101,5 +103,5 @@ def main():
     plt.show()
     
     # find validation and test error
-    
+
 main()
