@@ -2,7 +2,7 @@
 
 https://towardsdatascience.com/pca-using-python-scikit-learn-e653f8989e60
 https://stackoverflow.com/questions/44443479/python-sklearn-show-loss-values-during-training/44453621#44453621
-
+http://scikit-learn.org/stable/modules/generated/sklearn.linear_model.SGDClassifier.html#sklearn.linear_model.SGDClassifier.score
 
 """
 import io
@@ -67,12 +67,12 @@ def sgd(data, labels, a = 0.001, i = 1000):
     sgd.fit(x_train, y_train)
     score = sgd.score(x_test, y_test)
     
-    '''
     # plot loss 
     old_stdout = sys.stdout
     sys.stdout = mystdout = io.StringIO()
     sys.stdout = old_stdout
     loss_history = mystdout.getvalue()
+    
     loss_list = []
     for line in loss_history.split('\n'):
         if(len(line.split("loss: ")) == 1):
@@ -83,10 +83,10 @@ def sgd(data, labels, a = 0.001, i = 1000):
     plt.title('Loss over Epochs')
     plt.xlabel("Time in epochs")
     plt.ylabel("Loss")
+    plt.xlim([0, 9])
+    plt.ylim([0.5, 1])
     plt.show()
     plt.close()
-
-    '''
     
     return score
 
@@ -113,22 +113,23 @@ def main():
     data = standardize_data(data)
     
     principal_df, explained_variance = pca_projection(data)
+    
  
     # combine PC and labels
-    # turn labels into a df- need to standardize?? 
     labels_df = pd.DataFrame(labels)
     
     #run logistic reg
     #score = logistic_reg(principal_df, labels_df)
     #print('Score:', score)
     
-    #alpha = [0.01, 0.001, 0.0001]
-    #max_iter = [100, 1000, 10000]
-    #test_hyperparameters(principal_df, labels_df, alpha, max_iter)
-    #from this test, the lowest test score was reached using a = 0.001 and max_iter = 1000
+    # alpha = [0.01, 0.001, 0.0001]
+    # max_iter = [100, 1000, 10000]
+    # test_hyperparameters(principal_df, labels_df, alpha, max_iter)
+    # from this test, the lowest test score was reached using a = 0.001 and max_iter = 1000
     
     score = sgd(principal_df, labels_df)
     print('Test Score:', score)
     
+    # test for overfitting
     
 main()
