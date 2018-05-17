@@ -1,13 +1,5 @@
-"""
-
-https://towardsdatascience.com/pca-using-python-scikit-learn-e653f8989e60
-https://stackoverflow.com/questions/44443479/python-sklearn-show-loss-values-during-training/44453621#44453621
-
-"""
-
 import json
 from sklearn.decomposition import PCA
-from sklearn.preprocessing import StandardScaler
 import pandas as pd
 from sklearn.linear_model import LogisticRegression, SGDClassifier
 from sklearn.model_selection import train_test_split
@@ -18,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # data in format: [1, d["sentiment"][0] , d["sentiment"][1]]
-def standardize_data(data):
+def normalize_data(data):
     
     polarity_sum = 0
     subjectivity_sum = 0
@@ -26,14 +18,14 @@ def standardize_data(data):
     for d in data:
         polarity_sum += d[1]
         subjectivity_sum += d[2]
-        
     mean_polarity = polarity_sum / len(data)
     mean_subjectivity = subjectivity_sum / len(data)
         
     for i in range(len(data)):
         data[i][1] -= mean_polarity
         data[i][2] -= mean_subjectivity
-        
+    #for d in data:
+    #    print(d)
     return data
 
 
@@ -44,9 +36,10 @@ def pca_projection(data):
     principal_df = pd.DataFrame(data = principalComponents, columns = ['PC1'])
     
     explained_variance = pca.explained_variance_ratio_
-    
+    print('principal_df: ', principal_df)
+    print('explained_variance: ', explained_variance)
     return principal_df, explained_variance
-    
+
 
 def logistic_reg(data, labels):
     x_train, x_test, y_train, y_test = train_test_split(data, labels, test_size = 0.2)
@@ -57,7 +50,7 @@ def logistic_reg(data, labels):
     #predictions = logisticRegr.predict(x_test)
     
     score = logreg.score(x_test, y_test)
-
+    print('score: ', score)
     return score
 
 
@@ -84,7 +77,7 @@ def sgd(data, labels):
     plt.ylabel("Loss")
     plt.show()
     plt.close()
-    
+    print('sgd score: ', score)
     return score
 
 
@@ -98,16 +91,16 @@ def main():
     data = []
     labels = []
     for d in labeled_data:
-        data.append([1, d["sentiment"][0] ,  d["sentiment"][1]]) 
+        data.append([1, d["sentiment"][0],  d["sentiment"][1]])
         labels.append(d["label"])
         
-    data = standardize_data(data)
+    data = normalize_data(data)
     
     principal_df, explained_variance = pca_projection(data)
     #print(principal_df)
  
     # combine PC and labels
-    # turn labels into a df- need to standardize?? 
+    # turn labels into a df- need to normalize??
     labels_df = pd.DataFrame(labels)
     
     #run logistic reg
@@ -120,6 +113,5 @@ def main():
     
     #plot loss?
     
-    
-    
+
 main()
